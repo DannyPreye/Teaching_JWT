@@ -1,4 +1,6 @@
+// create a mongodatabase and link it
 const mongoose = require("mongoose");
+// install dotenv and link it
 const dotenv = require("dotenv");
 dotenv.config();
 

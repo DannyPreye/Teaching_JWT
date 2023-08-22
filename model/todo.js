@@ -2,6 +2,11 @@ const connection = require("../config/db.config");
 const mongoose = require("mongoose");
 
 const TodoSchema = mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        require: true,
+    },
     title: {
         type: String,
         require: true,

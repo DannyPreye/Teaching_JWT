@@ -23,8 +23,8 @@ const handleRegistration = async (req, res) => {
         });
 
         const saveUser = await newUser.save();
-
         if (saveUser) {
+            req.isAuthenticated = true;
             return res.status(201).json({
                 success: true,
                 data: {
@@ -60,7 +60,6 @@ const handleLogin = async (req, res) => {
                 message: "User not found",
                 success: false,
             });
-            W;
         }
 
         const salt = findUser.salt;
@@ -73,16 +72,18 @@ const handleLogin = async (req, res) => {
             });
         }
 
+        req.isAuthenticated = true;
+        console.log(req.isAuthenticated);
         res.status(200).json({
             success: true,
             data: {
                 firstName: findUser.firstName,
                 lastName: findUser.lastName,
+                id: findUser.id,
             },
         });
     } catch (error) {
         console.log(error);
-
         res.status(500).json({
             message: "Server Error",
             success: false,
