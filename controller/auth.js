@@ -1,5 +1,6 @@
 const user = require("../model/user");
 const { generatePassword, validatePassword } = require("../utils/helper");
+const issueJWT = require("../utils/jwt");
 const handleRegistration = async (req, res) => {
     const { firstName, lastName, email, password } = req.body;
 
@@ -25,12 +26,12 @@ const handleRegistration = async (req, res) => {
         const saveUser = await newUser.save();
         if (saveUser) {
             req.isAuthenticated = true;
+
+            const token = issueJWT(saveUser);
+
             return res.status(201).json({
                 success: true,
-                data: {
-                    firstName: saveUser.firstName,
-                    lastName: saveUser.lastName,
-                },
+                token,
             });
         } else {
             return res.status(400).json({
@@ -73,17 +74,12 @@ const handleLogin = async (req, res) => {
         }
 
         req.isAuthenticated = true;
-        console.log(req.isAuthenticated);
+        const token = issueJWT(findUser);
         res.status(200).json({
             success: true,
-            data: {
-                firstName: findUser.firstName,
-                lastName: findUser.lastName,
-                id: findUser.id,
-            },
+            token,
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: "Server Error",
             success: false,
