@@ -4,12 +4,22 @@ const user = require("../model/user");
 const createTodo = async (req, res) => {
     const { userId, title, description } = req.body;
 
+    console.log(userId);
     try {
+        if (!userId) {
+            return res.status(404).json({
+                message: "User id field is required",
+                success: false,
+            });
+        }
+
         const findUser = await user.findOne({
-            id: userId,
+            _id: userId,
         });
 
-        if (!user) {
+        // console.log("hello", findUser);
+
+        if (!findUser) {
             return res.status(404).json({
                 message: "User is not found",
                 success: false,
@@ -49,7 +59,7 @@ const getSingleTodo = async (req, res) => {
 
     try {
         const findTodo = await todo.findOne({
-            id: id,
+            _id: id,
         });
 
         if (!findTodo) {
@@ -75,6 +85,7 @@ const getSingleTodo = async (req, res) => {
 
 const getAllTodoForUser = async (req, res) => {
     const { userId } = req.params;
+
     try {
         const findTodo = await todo.find({ user: userId });
         if (!findTodo) {
@@ -84,6 +95,7 @@ const getAllTodoForUser = async (req, res) => {
             });
         }
 
+        const allTodo = await todo.find({});
         return res.status(200).json({
             data: findTodo,
             success: true,
@@ -104,7 +116,7 @@ const updateTodo = async (req, res) => {
 
     try {
         const findTodo = await todo.findOne({
-            id,
+            _id: id,
         });
 
         if (!findTodo) {
@@ -115,7 +127,7 @@ const updateTodo = async (req, res) => {
         }
 
         const updateTodo = await todo.findOneAndUpdate(
-            { id },
+            { _id: id },
             {
                 title: title || findTodo.title,
                 description: description || findTodo.description,
@@ -141,7 +153,7 @@ const deleteTodo = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const todoWithId = await todo.findOne({ id });
+        const todoWithId = await todo.findOne({ _id: id });
 
         if (!todoWithId) {
             return res.status(404).json({
@@ -150,7 +162,7 @@ const deleteTodo = async (req, res) => {
             });
         }
 
-        const del = await todo.findOneAndDelete({ id });
+        const del = await todo.findOneAndDelete({ _id: id });
 
         res.status(200).json({
             message: "Todo has been deleted",
