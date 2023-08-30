@@ -1,0 +1,1 @@
+Hello friend this is from javascript
